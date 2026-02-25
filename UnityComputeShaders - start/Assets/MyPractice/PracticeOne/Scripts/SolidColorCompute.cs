@@ -31,7 +31,7 @@ public class SolidColorCompute : MonoBehaviour
         computeShader.SetTexture(_kernelHandle, "Result", _outputRenderTexture);
         _rend.material.SetTexture("_MainTex", _outputRenderTexture);
         
-        DispatchShader(texResolution, texResolution);
+        DispatchShader(texResolution/8, texResolution/8);
     }
 
     private void DispatchShader(int x, int y)
