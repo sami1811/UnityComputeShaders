@@ -436,8 +436,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AssignTexture
   computeShader: {fileID: 7200000, guid: 346d9841970000a468f436973e377aca, type: 3}
-  kernelName: SquareSecond
-  texResolution: 1024
+  kernelName: QuizOne_Two
+  texResolution: 256
   circleRadius: 25
   rectArea: 25
 --- !u!1660057539 &9223372036854775807

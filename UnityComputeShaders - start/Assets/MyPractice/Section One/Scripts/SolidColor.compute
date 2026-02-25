@@ -6,6 +6,8 @@
 #pragma kernel CircleSecond
 #pragma kernel Square
 #pragma kernel SquareSecond
+#pragma kernel QuizOne_One
+#pragma kernel QuizOne_Two
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
@@ -92,4 +94,18 @@ void SquareSecond (uint3 id : SV_DispatchThreadID)
     float area = InSquare((float2)id.xy, rect);
     
     Result[id.xy] = float4(0.0,0.0,area,1.0);
+}
+
+[numthreads(16,16,1)]
+void QuizOne_One (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    Result[id.xy] = float4(1.0,0.0,0.0,1.0);
+}
+
+[numthreads(16,16,1)]
+void QuizOne_Two (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    Result[id.xy] = float4(1.0,(id.x > _texResolution >> 1) ? 1 : 0,0.0,1.0);
 }
