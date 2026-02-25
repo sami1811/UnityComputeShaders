@@ -31,9 +31,10 @@ public class Challenge1 : MonoBehaviour
 
 		//Create a Vector4 with parameters x, y, width, height
         //Pass this to the shader using SetVector
+        Vector4 rect = new Vector4(texResolution * 0.25f,  texResolution * 0.25f, texResolution * 0.5f, texResolution * 0.5f);
         
-        shader.SetTexture(kernelHandle, "Result", outputTexture);
-       
+        shader.SetTexture(kernelHandle, "Result", outputTexture); 
+        shader.SetVector("_rect", rect);
         rend.material.SetTexture("_MainTex", outputTexture);
 
         DispatchShader(texResolution / 8, texResolution / 8);

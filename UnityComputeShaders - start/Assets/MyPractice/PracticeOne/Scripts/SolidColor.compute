@@ -2,25 +2,31 @@
 #pragma kernel SolidRed
 #pragma kernel SolidYellow
 #pragma kernel SplitScreen
+#pragma kernel Circle
+#pragma kernel CircleSecond
+#pragma kernel Square
+#pragma kernel SquareSecond
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
 int _texResolution;
+int _radius;
+int _area;
 
 [numthreads(8,8,1)]
 void SolidRed (uint3 id : SV_DispatchThreadID)
 {
     // TODO: insert actual code here!
 
-    Result[id.xy] = float4(1,0,0,1);
+    Result[id.xy] = float4(1.0,0.0,0.0,1.0);
 }
 
 [numthreads(8,8,1)]
 void SolidYellow (uint3 id : SV_DispatchThreadID)
 {
     // TODO: insert actual code here!
-    Result[id.xy] = float4(1,1,0,1);
+    Result[id.xy] = float4(1.0,1.0,0.0,1.0);
 }
 
 [numthreads(8,8,1)]
@@ -28,5 +34,62 @@ void SplitScreen (uint3 id : SV_DispatchThreadID)
 {
     // TODO: insert actual code here!
     int halfRes = _texResolution >> 1; //Equivalent to dividing by two
-    Result[id.xy] = float4(step(halfRes, id.x),step(halfRes, id.y),0,1);
+    Result[id.xy] = float4(step(halfRes, id.x),step(halfRes, id.y),0.0,1.0);
+}
+
+[numthreads(8,8,1)]
+void Circle (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    float2 centre = float2(_texResolution >> 1,_texResolution >> 1);
+    float radius = float(_texResolution * (_radius/100.0));
+    float dist = distance((float2)id.xy,centre);
+    
+    float inside = 1.0 - step(radius,dist);
+    
+    Result[id.xy] = float4(inside,inside,0.0,1.0);
+}
+
+float InCircle(float2 pt, float radius)
+{
+    return (length(pt)<radius) ? 1.0 : 0.0;
+}
+[numthreads(8,8,1)]
+void CircleSecond (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    int halfRes = _texResolution >> 1;
+    float radius = float(_texResolution * (_radius/100.0));
+    float inside = InCircle((float2)(int2)id.xy - halfRes, radius);
+    Result[id.xy] = float4(inside,inside,0,1);
+}
+
+[numthreads(8,8,1)]
+void Square (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    float2 centre = float2(_texResolution >> 1, _texResolution >> 1);
+    float halfSize = float(_texResolution * (_area/100.0));
+    
+    float2 insideXY = step(centre.xy - halfSize,id.xy) * (1.0 - step(centre.xy + halfSize,id.xy));
+    
+    float area = insideXY.x * insideXY.y;
+    
+    Result[id.xy] = float4(0.0,0.0,area,1.0);
+}
+
+float InSquare(float2 pt, float4 rect)
+{
+    float2 HV = step(rect.xy, pt.xy) - step(rect.xy + rect.zw, pt.xy);
+    return HV.x * HV.y;
+}
+[numthreads(8,8,1)]
+void SquareSecond (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    float4 rect = float4(_texResolution >> 2, _texResolution >> 2, _texResolution >> 1, _texResolution >> 1);
+    
+    float area = InSquare((float2)id.xy, rect);
+    
+    Result[id.xy] = float4(0.0,0.0,area,1.0);
 }

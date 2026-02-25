@@ -6,6 +6,8 @@ public class SolidColorCompute : MonoBehaviour
     [SerializeField] ComputeShader computeShader;
     [SerializeField] string kernelName = "SolidRed";
     [SerializeField] int texResolution = 256;
+    [SerializeField,Tooltip("Circle radius in Percentage, Only works with Circle kernels")] int circleRadius = 50;
+    [SerializeField,Tooltip("Square area in Percentage, Only works with Square kernel")] int rectArea = 50;
     
     Renderer _rend;
     RenderTexture _outputRenderTexture;
@@ -28,6 +30,8 @@ public class SolidColorCompute : MonoBehaviour
     {
         _kernelHandle = computeShader.FindKernel(kernelName);
         computeShader.SetInt("_texResolution", texResolution);
+        computeShader.SetInt("_radius", circleRadius);
+        computeShader.SetInt("_area", rectArea);
         computeShader.SetTexture(_kernelHandle, "Result", _outputRenderTexture);
         _rend.material.SetTexture("_MainTex", _outputRenderTexture);
         

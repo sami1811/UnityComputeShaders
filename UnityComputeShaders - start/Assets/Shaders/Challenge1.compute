@@ -4,18 +4,22 @@
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
+int _texResolution;
 //Create a float4 to hold the rectangle that defines the square
+vector _rect;
 
 //Return 1 if pt is in the rect parameter and 0 otherwise
 float inSquare( float2 pt, float4 rect ){
-    return 0.0;
+	float hor = step(rect.x, pt.x) - step(rect.x + rect.z, pt.x);
+	float ver = step(rect.y, pt.y) - step(rect.y + rect.w, pt.y);
+	return  hor * ver;
 }
 
 [numthreads(8,8,1)]
 void Square (uint3 id : SV_DispatchThreadID)
 {
 	//Call the inSquare function to set res
-    float res = 0;
-
+    float res = inSquare((float2)id.xy, _rect);
+	
     Result[id.xy] = float4(0.0, 0.0, res, 1.0);
 }
