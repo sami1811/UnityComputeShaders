@@ -3,7 +3,6 @@ using System.Collections;
 
 public class PassData : MonoBehaviour
 {
-
     public ComputeShader shader;
     public int texResolution = 1024;
 
@@ -11,6 +10,7 @@ public class PassData : MonoBehaviour
     RenderTexture outputTexture;
 
     int circlesHandle;
+    int clearHandle;
 
     public Color clearColor = new Color();
     public Color circleColor = new Color();
@@ -30,22 +30,28 @@ public class PassData : MonoBehaviour
 
     private void InitShader()
     {
+        clearHandle = shader.FindKernel("Clear");
         circlesHandle = shader.FindKernel("Circles");
 
         shader.SetInt( "texResolution", texResolution);
+        shader.SetVector("_clearColor", clearColor);
+        shader.SetVector("_circleColor", circleColor);
+        
         shader.SetTexture( circlesHandle, "Result", outputTexture);
-
+        shader.SetTexture( clearHandle, "Result", outputTexture);
         rend.material.SetTexture("_MainTex", outputTexture);
     }
  
-    private void DispatchKernel(int count)
+    private void DispatchKernels(int count)
     {
+        shader.Dispatch(clearHandle, texResolution/8, texResolution/8, 1);
         shader.Dispatch(circlesHandle, count, 1, 1);
+        shader.SetFloat("_time", Time.time);
     }
 
     void Update()
     {
-        DispatchKernel(1);
+        DispatchKernels(10);
     }
 }
 
