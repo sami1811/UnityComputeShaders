@@ -2,15 +2,19 @@ using UnityEngine;
 
 public class MyPassData : MonoBehaviour
 {
-    [SerializeField] ComputeShader computeShader;
-    [SerializeField] int texResolution = 1024;
-    [SerializeField] Color clearColor, circleColor;
+    [SerializeField] private ComputeShader computeShader;
+    [SerializeField] private string kernelHandle = "Bresenham";
+    [SerializeField] private int texResolution = 1024;
+    [SerializeField] private Color clearColor, circleColor;
+    [SerializeField] private Vector2 startPoint;
+    [SerializeField] private Vector2 endPoint;
     
-    Renderer _rend;
-    RenderTexture _outputTexture;
+    private Renderer _rend;
+    private RenderTexture _outputTexture;
     
-    int clearHandle;
-    int circleHandle;
+    private int clearHandle;
+    private int circleHandle;
+    private int bresenhamHandle;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -29,13 +33,17 @@ public class MyPassData : MonoBehaviour
     {
         clearHandle = computeShader.FindKernel("Clear");
         circleHandle = computeShader.FindKernel("Circles");
+        bresenhamHandle = computeShader.FindKernel("Bresenham");
         
         computeShader.SetInt("_texResolution", texResolution);
         computeShader.SetVector("_clearColor", clearColor);
         computeShader.SetVector("_circleColor", circleColor);
+        computeShader.SetVector("_startPoint", startPoint);
+        computeShader.SetVector("_endPoint", endPoint);
         
         computeShader.SetTexture(clearHandle, "Result", _outputTexture);
         computeShader.SetTexture(circleHandle, "Result", _outputTexture);
+        computeShader.SetTexture(bresenhamHandle, "Result", _outputTexture);
         _rend.material.SetTexture("_MainTex", _outputTexture);
     }
 
@@ -44,11 +52,12 @@ public class MyPassData : MonoBehaviour
         computeShader.SetFloat("_time",  Time.time);
         computeShader.Dispatch(clearHandle, texResolution/8, texResolution/8, 1);
         computeShader.Dispatch(circleHandle, count, 1, 1);
+        computeShader.Dispatch(bresenhamHandle, texResolution, texResolution, 1);
     }
     
     // Update is called once per frame
     void Update()
     {
-        DispatchKernels(10);
+        DispatchKernels(15);
     }
 }

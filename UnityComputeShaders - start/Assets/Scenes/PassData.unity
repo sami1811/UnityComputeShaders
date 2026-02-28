@@ -436,9 +436,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MyPassData
   computeShader: {fileID: 7200000, guid: b122b6d28489d5547be50676c369c46e, type: 3}
+  kernelHandle: 
   texResolution: 1024
-  clearColor: {r: 0.38679248, g: 0.38679248, b: 0.38679248, a: 1}
+  clearColor: {r: 0.16037738, g: 0.16037738, b: 0.16037738, a: 1}
   circleColor: {r: 0.5771357, g: 1, b: 0, a: 1}
+  startPoint: {x: 785, y: 176}
+  endPoint: {x: 643, y: 512}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -2,9 +2,17 @@
 #pragma kernel Circles
 #pragma kernel Clear
 
+struct CircleData
+{
+	float2 origin;
+	float2 velocity;
+	float radius;
+};
+
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 shared RWTexture2D<float4> Result;
+StructuredBuffer<CircleData> CirclesBuffer;
 
 float4 clearColor;
 float4 circleColor;
@@ -57,8 +65,25 @@ void drawCircle( int2 centre, int radius ) {
 [numthreads(32,1,1)]
 void Circles (uint3 id : SV_DispatchThreadID)
 {
-	int2 centre = (int2)(random2((float)id.x + time) * (float)texResolution);
-	int radius = (int)(random((float)id.x) * 30);
+	int2 centre = (int2)(CirclesBuffer[id.x].origin + CirclesBuffer[id.x].velocity * time);
+	int radius = (int)CirclesBuffer[id.x].radius;
+
+	while (centre.x < 0)
+	{
+		centre.x += texResolution;
+	}
+	while (centre.y < 0)
+	{
+		centre.y += texResolution;
+	}
+	while (centre.x > texResolution)
+	{
+		centre.x -= texResolution;
+	}
+	while (centre.y > texResolution)
+	{
+		centre.y -= texResolution;
+	}
 	
 	drawCircle( centre, radius );
 }

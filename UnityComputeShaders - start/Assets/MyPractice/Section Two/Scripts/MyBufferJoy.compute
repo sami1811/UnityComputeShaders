@@ -3,9 +3,17 @@
 #pragma kernel Clear
 #pragma kernel Bresenham
 
+struct CircleData
+{
+    float2 origin;
+    float2 velocity;
+    float radius;
+};
+
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 shared RWTexture2D<float4> Result;
+StructuredBuffer<CircleData> _circlesBuffer;
 
 int _texResolution;
 float _time;
@@ -71,8 +79,25 @@ void Clear(uint3 id : SV_DispatchThreadID)
 void Circles(uint3 id : SV_DispatchThreadID)
 {
     // TODO: insert actual code here!
-    int2 centre = (int2)(Random2((float)id.x + _time) * (float)_texResolution);
-    int radius = (int)(Random((float)id.x) * 30);
+    int2 centre = (int2)(_circlesBuffer[id.x].origin + _circlesBuffer[id.x].velocity * _time);
+    int radius = (int)_circlesBuffer[id.x].radius;
+    
+    while (centre.x < 0)
+    {
+        centre.x += _texResolution;
+    }
+    while (centre.y < 0)
+    {
+        centre.y += _texResolution;
+    }
+    while (centre.x > _texResolution)
+    {
+        centre.x -= _texResolution;
+    }
+    while (centre.y > _texResolution)
+    {
+        centre.y -= _texResolution;
+    }
     
     DrawCircle(centre, radius);
 }
