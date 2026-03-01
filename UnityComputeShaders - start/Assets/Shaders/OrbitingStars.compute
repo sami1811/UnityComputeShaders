@@ -24,7 +24,7 @@ void OrbitingStars (uint3 id : SV_DispatchThreadID)
 	float3 vec = normalize(random3(id.x + 7.1393) - 0.5);
 	float3 cosDir = normalize(cross(sinDir, vec));
 	
-	float scaleTime = time * 0.5 + random(id.x) * 343.23356646;
+	float scaleTime = time * 0.5 + random(id.x) * 543.23356646;
 	float3 pos = sinDir * sin(scaleTime) + cosDir * cos(scaleTime); //to keep the stars orbiting into the circle shape
 	
 	result_buffer[id.x] = pos * 2;

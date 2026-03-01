@@ -366,7 +366,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1677440273}
-  - component: {fileID: 1677440272}
+  - component: {fileID: 1677440274}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -374,21 +374,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1677440272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677440271}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e37798e49f254338ad105fc80880a48, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  starCount: 1000
-  shader: {fileID: 7200000, guid: d5d30d9082f1a4b6184e67c4a0a25422, type: 3}
-  prefab: {fileID: 8765332503600944482, guid: 78a47e876f86a4f5cba6e7d26269d2cd, type: 3}
 --- !u!4 &1677440273
 Transform:
   m_ObjectHideFlags: 0
@@ -404,6 +389,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1677440274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677440271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f91f65751b6bef4ba76eb11f48479cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MyOrbitingStars
+  computeShader: {fileID: 7200000, guid: fed4a960cd5399448b8c6314010dbe18, type: 3}
+  starPrefab: {fileID: 8765332503600944482, guid: 78a47e876f86a4f5cba6e7d26269d2cd,
+    type: 3}
+  starCount: 1000
+  orbitRadius: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

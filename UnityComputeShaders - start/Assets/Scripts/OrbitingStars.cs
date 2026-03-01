@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class OrbitingStars : MonoBehaviour
 {
@@ -33,13 +29,7 @@ public class OrbitingStars : MonoBehaviour
         for (int i = 0; i < starCount; i++)
         {
             stars[i] = Instantiate(prefab, transform).transform;
-            stars[i].position = _output[i];
         }
-    }
-
-    void GetData()
-    {
-        
     }
     
     void Update()

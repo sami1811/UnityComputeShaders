@@ -1,0 +1,34 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel OrbitingStars
+
+RWStructuredBuffer<float3> result_buffer;
+
+float _time;
+float _orbitRadius;
+
+float random(float value, float seed = 0.546){
+    float res = frac(sin(value + seed) * 143758.5453);
+    return res;
+}
+
+float3 random3(float value){
+    return float3(
+        random(value, 3.9812),
+        random(value, 7.1536),
+        random(value, 5.7241)
+    );
+}
+
+[numthreads(64,1,1)]
+void OrbitingStars (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    float3 sin_dir = normalize(random3(id.x) - 0.5);
+    float3 vec = normalize(random3(id.x + 5.245) - 0.5);
+    float3 cos_dir = normalize(cross(sin_dir, vec));
+    
+    float scaled_time = _time * 0.5 + random(id.x) * 934.354326;
+    float3 pos = sin_dir * sin(scaled_time) + cos_dir * cos(scaled_time);
+    
+    result_buffer[id.x] = pos * _orbitRadius;
+}
