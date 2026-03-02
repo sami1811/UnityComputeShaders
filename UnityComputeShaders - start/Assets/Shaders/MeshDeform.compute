@@ -1,9 +1,29 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
 
+struct Vertex
+{
+    float3 position;
+    float3 normals;
+};
+
+RWStructuredBuffer<Vertex> vertex_buffer;
+StructuredBuffer<Vertex> initial_buffer;
+
 float delta;
+float radius;
 
 [numthreads(1,1,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
+    float3 initialPosition = initial_buffer[id.x].position;
+    float3 s = float3(normalize(initialPosition) * radius * 0.01);
+    float3 actualPostion = lerp(initialPosition, s, delta);
+    
+    float3 initialNormals = initial_buffer[id.x].normals;
+    float3 sNormals = normalize(initialPosition);
+    float3 actualNormals = lerp(initialNormals, sNormals, delta);
+    
+    vertex_buffer[id.x].normals = actualNormals;
+    vertex_buffer[id.x].position = actualPostion;
 }
