@@ -32,18 +32,31 @@ float polygon(float2 pt, float2 center, float radius, int sides, float rotate, f
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
 	//1. Change the coordinate space of id.xy from (0,0)-(texResolution,texResolution) to (-0.5, -0.5)-(0.5,0.5)
+	float minValue = -0.5;
+	float maxValue = 0.5;
+	float2 points = minValue + ((float2)id.xy / texResolution) * (maxValue - minValue);
 	
 	//2. Set the center to (0,0) and radius to 0.15
+	float radius = 0.15;
+	float2 center = (minValue + maxValue) / 2.0;
 	
 	//3. Call polygon using the pt you calculated at step 1, the center and radius from step 2. 
 	//   sides and time are passed from the C# script
-    
+    float insidePolygon = polygon(points, center, radius, sides, time * PI2, 0.001);
+	
     //4. Set noise. Use the snoise function and pt * 100
+	float sinWave = sin((points + time) * 5.0);
+	float noiseOne = snoise((sinWave * points * 100.0 * (sinWave - insidePolygon)));
+	float noiseTwo = snoise((points * 80.0 / (sinWave + insidePolygon)));
+	float noiseThree = snoise((sinWave * points * 70.0 * (sinWave - insidePolygon)));
+	float noiseFour = snoise((points * 50.0 / (sinWave + insidePolygon)));
+	float noiseFirst = noiseOne + noiseTwo;
+	float noiseSecond = noiseThree + noiseFour;
+	float finalNoise = lerp(noiseFirst, noiseSecond, sinWave);
     
     //5. Use the HLSL function lerp to blend between clearColor and fillColor*noise using the return
     //   value from step 3
-    
-    float4 color = 1;
+    float4 color = lerp(clearColor, fillColor * finalNoise, insidePolygon);
 
     Result[id.xy] = color;
 }

@@ -6,6 +6,8 @@ public class Challenge2 : MonoBehaviour
 
     public ComputeShader shader;
     public int texResolution = 1024;
+    public int sides = 5;
+    public float speed = 0.1f;
 
     Renderer rend;
     RenderTexture outputTexture;
@@ -32,7 +34,6 @@ public class Challenge2 : MonoBehaviour
     {
         kernelHandle = shader.FindKernel("CSMain");
 
-        shader.SetVector("fillColor", fillColor);
         shader.SetVector("clearColor", clearColor);
 
         shader.SetInt("texResolution", texResolution);
@@ -43,7 +44,9 @@ public class Challenge2 : MonoBehaviour
 
     private void DispatchShader(int x, int y)
     {
-    	shader.SetFloat( "time", Time.time );
+    	shader.SetFloat( "time", Time.time * speed);
+        shader.SetInt("sides", sides);
+        shader.SetVector("fillColor", fillColor);
         shader.Dispatch(kernelHandle, x, y, 1);
     }
 
