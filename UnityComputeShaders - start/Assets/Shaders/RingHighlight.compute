@@ -1,8 +1,8 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Highlight
 
-Texture2D<float4> source;
-RWTexture2D<float4> output;
+Texture2D<float4> rendered_source;
+RWTexture2D<float4> rendered_output;
 float radius;
 float edgeWidth;
 float shade;
@@ -16,8 +16,10 @@ float inCircle( float2 pt, float2 center, float radius, float edgeWidth ){
 [numthreads(8, 8, 1)]
 void Highlight(uint3 id : SV_DispatchThreadID)
 {
-    float4 color = source[id.xy];
+    float4 sourceColor = rendered_source[id.xy];
+    float4 shadedSourceColor = sourceColor * shade;
+    float hightLights = inCircle((float2)id.xy, center.xy, radius, edgeWidth);
+    float4 color = lerp(shadedSourceColor, sourceColor, hightLights);
     
-    output[id.xy] = color;
-
+    rendered_output[id.xy] = color;
 }

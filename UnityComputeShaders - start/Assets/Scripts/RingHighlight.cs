@@ -13,6 +13,8 @@ public class RingHighlight : BasePP
     public float shade;
     public Transform trackedObject;
 
+    private Vector4 _centre;
+
     protected override void Init()
     {
         kernelName = "Highlight";
@@ -43,7 +45,23 @@ public class RingHighlight : BasePP
         }
         else
         {
-            CheckResolution(out _);
+            if (trackedObject && thisCamera)
+            {
+                Vector3 objectPosition = thisCamera.WorldToScreenPoint(trackedObject.position);
+                _centre.x = objectPosition.x;
+                _centre.y = objectPosition.y;
+                
+                shader.SetVector("center", _centre);
+            }
+            
+            bool resChange = false;
+            CheckResolution(out resChange);
+
+            if (resChange)
+            {
+                SetProperties();
+            }
+            
             DispatchWithSource(ref source, ref destination);
         }
     }
