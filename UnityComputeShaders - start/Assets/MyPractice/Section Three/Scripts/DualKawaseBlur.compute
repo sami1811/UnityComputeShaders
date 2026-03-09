@@ -1,0 +1,67 @@
+#pragma kernel KawaseDown
+#pragma kernel KawaseUp
+#pragma kernel Highlight
+
+Texture2D<float4> original_source;
+Texture2D<float4> rendered_source;
+RWTexture2D<float4> rendered_output;
+SamplerState linearClampSampler;
+
+uint width, height;
+float4 _centre;
+float offset;
+float _edgeWidth;
+float _radius;
+float _shade;
+
+float inCircle( float2 pt, float2 center, float radius, float edgeWidth ){
+    float len = length(pt - center);
+    return 1.0 - smoothstep(radius-edgeWidth, radius, len);
+}
+
+[numthreads(8, 8, 1)]
+void KawaseDown(uint3 id : SV_DispatchThreadID)
+{
+    float2 uv = (float2(id.xy) + 0.5) / float2(width, height);
+    float2 halfPixel = (0.5 + offset) / float2(width, height);
+
+    float4 color = rendered_source.SampleLevel(linearClampSampler, uv, 0) * 4.0;
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2(-halfPixel.x,  halfPixel.y), 0);
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2( halfPixel.x,  halfPixel.y), 0);
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2(-halfPixel.x, -halfPixel.y), 0);
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2( halfPixel.x, -halfPixel.y), 0);
+    
+    rendered_output[id.xy] = color / 8.0;
+}
+
+[numthreads(8, 8, 1)]
+void KawaseUp(uint3 id : SV_DispatchThreadID)
+{
+    float2 uv = (float2(id.xy) + 0.5) / float2(width, height);
+    float2 halfPixel = (0.5 + offset) / float2(width, height);
+
+    float4 color = 0;
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2(-halfPixel.x * 2,  0), 0);
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2( halfPixel.x * 2,  0), 0);
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2( 0, -halfPixel.y * 2), 0);
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2( 0,  halfPixel.y * 2), 0);
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2(-halfPixel.x,  halfPixel.y), 0) * 2;
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2( halfPixel.x,  halfPixel.y), 0) * 2;
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2(-halfPixel.x, -halfPixel.y), 0) * 2;
+    color += rendered_source.SampleLevel(linearClampSampler, uv + float2( halfPixel.x, -halfPixel.y), 0) * 2;
+    
+    rendered_output[id.xy] = color / 12.0;
+}
+
+[numthreads(8, 8, 1)]
+void Highlight(uint3 id : SV_DispatchThreadID)
+{
+    float4 finalColor = 0;
+    float4 originalColor = original_source[id.xy];
+    float4 blurredColor = rendered_source[id.xy] * _shade;
+    
+    float highlight = inCircle((float2)id.xy, _centre.xy, _radius,_edgeWidth);
+    finalColor = lerp(blurredColor, originalColor, highlight);
+    
+    rendered_output[id.xy] = finalColor;
+}

@@ -527,7 +527,7 @@ GameObject:
   - component: {fileID: 1647938311}
   - component: {fileID: 1647938310}
   - component: {fileID: 1647938313}
-  - component: {fileID: 1647938314}
+  - component: {fileID: 1647938315}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -623,7 +623,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 955442739}
   limitsX: []
---- !u!114 &1647938314
+--- !u!114 &1647938315
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -632,15 +632,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1647938309}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57e1036fe4d0a41c0abc6ba2fab74533, type: 3}
+  m_Script: {fileID: 11500000, guid: 994b7404e1bfc8b4899006e99f0f1998, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  shader: {fileID: 7200000, guid: 1ce322ccd86544eb6828c7ea2851b8ae, type: 3}
-  blurRadius: 28
-  radius: 28.3
-  softenEdge: 51.6
-  shade: 0.553
-  trackedObject: {fileID: 190369478}
+  m_EditorClassIdentifier: Assembly-CSharp::DualKawaseBlur
+  enableEffect: 1
+  computeShader: {fileID: 7200000, guid: bf06cf4ee2b9b05449efbb3c99dcbc24, type: 3}
+  resolutionDivisor: 1
+  targetObject: {fileID: 190369478}
+  passes: 4
+  offset: 5
+  radius: 44.6
+  softenEdge: 50
+  shade: 1
 --- !u!1 &1775990536
 GameObject:
   m_ObjectHideFlags: 0

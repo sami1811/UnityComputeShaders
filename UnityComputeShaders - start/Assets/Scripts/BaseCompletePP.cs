@@ -80,8 +80,8 @@ public class BaseCompletePP : MonoBehaviour
         {
             uint x, y;
             shader.GetKernelThreadGroupSizes(kernelHandle, out x, out y, out _);
-            groupSize.x = Mathf.CeilToInt((float)texSize.x / (float)x);
-            groupSize.y = Mathf.CeilToInt((float)texSize.y / (float)y);
+            groupSize.x = Mathf.CeilToInt((float)texSize.x / x);
+            groupSize.y = Mathf.CeilToInt((float)texSize.y / y);
         }
 
         CreateTexture(ref output);
@@ -94,7 +94,7 @@ public class BaseCompletePP : MonoBehaviour
     protected virtual void OnEnable()
     {
         Init();
-        //CreateTextures();
+        CreateTextures();
     }
 
     protected virtual void OnDisable()

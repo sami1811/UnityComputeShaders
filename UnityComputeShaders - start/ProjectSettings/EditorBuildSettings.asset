@@ -4,5 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/BlurHighlight.unity
+    guid: 7c1f31fa338084fe4ac7f80c9c78ad76
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0
