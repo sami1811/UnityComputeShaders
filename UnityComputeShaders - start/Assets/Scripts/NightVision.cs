@@ -15,8 +15,6 @@ public class NightVision : BaseCompletePP
     [Range(50, 500)]
     public int lines = 100;
 
-    [Range(1, 4)] public int resolutionDivisor = 1;
-
     private void OnValidate()
     {
         if(!init)
@@ -33,7 +31,6 @@ public class NightVision : BaseCompletePP
         shader.SetVector("tintColor", tint);
         shader.SetFloat("tintStrength", tintStrength);
         shader.SetInt("lines", lines);
-        shader.SetInt("resolutionDivisor", resolutionDivisor);
     }
 
     protected override void OnRenderImage(RenderTexture source, RenderTexture destination)
