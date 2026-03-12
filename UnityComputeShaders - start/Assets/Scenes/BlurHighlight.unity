@@ -640,10 +640,10 @@ MonoBehaviour:
   resolutionDivisor: 1
   targetObject: {fileID: 190369478}
   passes: 4
-  offset: 5
-  radius: 44.6
-  softenEdge: 50
-  shade: 1
+  offset: 3
+  radius: 45.8
+  softenEdge: 28.1
+  shade: 0.247
 --- !u!1 &1775990536
 GameObject:
   m_ObjectHideFlags: 0

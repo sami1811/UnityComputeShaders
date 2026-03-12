@@ -1,0 +1,65 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel MyNightVision
+
+Texture2D<float4> rendered_source;
+RWTexture2D<float4> rendered_output;
+float _radius;
+float _edgeWidth;
+int _lines;
+float4 _tintColor;
+float _tintStrength;
+float _time;
+float _resolutionDivisor;
+float _contrast;
+float _lineContrast;
+float _lenseOffset;
+
+float random (float2 pt, float seed) {
+    const float a = 12.9898;
+    const float b = 78.233;
+    const float c = 43758.543123;
+    return frac(sin(dot(pt, float2(a, b)) + seed) * c );
+}
+
+float inCircle( float2 pt, float2 center, float radius, float edgeWidth ){
+    float len = length(pt - center);
+    return 1.0 - smoothstep(radius-edgeWidth, radius, len);
+}
+
+[numthreads(8,8,1)]
+void MyNightVision (uint3 id : SV_DispatchThreadID)
+{
+    float4 blackColor = 0;
+    uint2 index = (uint2(id.x, id.y) / _resolutionDivisor) * _resolutionDivisor;
+    
+    float noise = random(float2(id.xy), _time);
+    
+    float3 sourceColor = lerp(rendered_source[id.xy].rgb * _contrast, rendered_source[index].rgb, noise);
+    
+    float3 grayScale = (sourceColor.r + sourceColor.g + sourceColor.b) / _resolutionDivisor;
+    float3 tintedColor = grayScale * _tintColor;
+    float3 finalColor = lerp(sourceColor, tintedColor, _tintStrength);
+    
+    uint textureWidth, textureHeight;
+    
+    rendered_source.GetDimensions(textureWidth, textureHeight);
+           
+    float uvY = float(id.y) / (float)textureHeight;
+    float scanLines = saturate(smoothstep(0.1, 0.2, frac(uvY * _lines + _time * _resolutionDivisor)) + _lineContrast);
+    
+    finalColor = lerp(rendered_source[id.xy].rgb * 0.5, finalColor, scanLines);
+    
+    float2 pt = (float2)id.xy;
+    float2 centre = float2(textureWidth * 0.5, textureHeight * 0.5);
+    
+    centre.x -= _radius * _lenseOffset;
+    float leftLense = inCircle(pt, centre, _radius, _edgeWidth);
+    
+    centre.x += _radius * _lenseOffset * 2.0;
+    float rightLense = inCircle(pt, centre, _radius, _edgeWidth);
+    
+    float inVision = saturate(leftLense + rightLense);
+    
+    finalColor = lerp(blackColor, finalColor, inVision);
+    rendered_output[id.xy] = float4(finalColor, 1);
+}

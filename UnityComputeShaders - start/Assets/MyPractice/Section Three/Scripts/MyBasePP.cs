@@ -31,19 +31,6 @@ public class MyBasePP : MonoBehaviour
     {
         Init();
     }
-    
-    protected virtual void OnValidate()
-    {
-        if (!_init)
-        {
-            Init();
-        }
-
-        if (_init)
-        {
-            SetProperties();
-        }
-    }
 
     protected virtual void OnDisable()
     {
@@ -55,6 +42,16 @@ public class MyBasePP : MonoBehaviour
     {
         ClearTextures();
         _init = false;
+    }
+    
+    protected virtual void OnValidate()
+    {
+        if (!_init)
+        {
+            return;
+        }
+        
+        SetProperties();
     }
 
     protected virtual void Init()

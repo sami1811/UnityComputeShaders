@@ -443,6 +443,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 380843811}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1248576588 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4341065987587142778, guid: d874261ddf5224bbb9f83fd562ac6793,
+    type: 3}
+  m_PrefabInstance: {fileID: 190369477}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1647938309
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,6 +462,7 @@ GameObject:
   - component: {fileID: 1647938310}
   - component: {fileID: 1647938313}
   - component: {fileID: 1647938314}
+  - component: {fileID: 1647938315}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -558,7 +565,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1647938309}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2028f6f58aa2447ebbd325afc846971a, type: 3}
   m_Name: 
@@ -569,6 +576,30 @@ MonoBehaviour:
   softenEdge: 18
   tint: {r: 0.2696244, g: 0.7830189, b: 0.2696244, a: 1}
   lines: 59
+--- !u!114 &1647938315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647938309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a6d581d3a714245aef65fb0f65599b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MyNightVision
+  enableEffect: 1
+  computeShader: {fileID: 7200000, guid: fdaab136a5cacca4fabf8ac151ae4f58, type: 3}
+  resolutionDivisor: 2
+  _targetTransform: {fileID: 1248576588}
+  tintColor: {r: 0.11213957, g: 0.3226687, b: 0.5283019, a: 1}
+  tintStrength: 1
+  contrast: 2
+  radius: 36.5
+  softenEdge: 10
+  lines: 64
+  lineContrast: 0.434
+  lenseOffset: 0.7
 --- !u!1 &1775990536
 GameObject:
   m_ObjectHideFlags: 0
