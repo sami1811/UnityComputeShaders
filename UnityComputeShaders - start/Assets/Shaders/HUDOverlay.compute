@@ -22,7 +22,16 @@ float sweep(float2 pt, float2 center, float radius, float line_width, float edge
     //h = dot(d,p)/dot(p,p);
     float l = length(d - p*h);
 
-    return 1.0 - smoothstep(line_width, line_width+edge_thickness, l);
+    float gradient = 0;
+    float gradientAngle = sin(time) + PI2 * 0.5;
+    
+    if (length(d) < radius)
+    {
+        float angle = fmod(theta + atan2(d.y, d.x), PI2);
+        
+        gradient = clamp(gradientAngle - angle, 0, gradientAngle / gradientAngle * 1.5);
+    }
+    return gradient + 1.0 - smoothstep(line_width, line_width+edge_thickness, l);
 }
 
 float circle(float2 pt, float2 center, float radius, float line_width, float edge_thickness){
@@ -55,22 +64,34 @@ float polygon(float2 pt, float2 center, float radius, int sides, float rotate, f
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
     float3 white = 1;
-    
+    uint2 textureDimensions;
     float2 uv = (float2)id.xy;
     float2 center = 0.5;
-    float aspectRatio = (float)source.Length.x/(float)source.Length.y;
+    
+    source.GetDimensions(textureDimensions.x, textureDimensions.y);
+    
+    float aspectRatio = (float)textureDimensions.x/(float)textureDimensions.y;
 
     if (aspectRatio>1){
-        uv /= (float)source.Length.y;
+        uv /= (float)textureDimensions.y;
         center.x *= aspectRatio; 
     }else{
-        uv /= (float)source.Length.x;
+        uv /= (float)textureDimensions.x;
         center.y /= aspectRatio;
     }
 
     float3 color = onLine(uv.y, center.y, 0.002, 0.001) * axisColor.rgb;//xAxis
     //TO DO: Add code here
-
+    color += onLine(uv.x, center.x, 0.002, 0.001) * axisColor.rgb;//yAxis
+    color += circle(uv, center, 0.45, 0.005, 0.005);
+    color += circle(uv, center, 0.3, 0.0025, 0.005);
+    color += circle(uv, center, 0.15, 0.00125, 0.005);
+    color += sweep(uv, center, 0.45, 0.0025, 0.001) * sweepColor.rgb;
+    
+    float offset = sin(time * 4) * 0.05 + 0.5;
+    color += polygon(uv, float2(center.x + offset, center.y), 0.008, 3, 0, 0.001) * white.rgb; 
+    color += polygon(uv, float2(center.x - offset, center.y), 0.008, 3, PI, 0.001) * white.rgb; 
+    
     float alpha = saturate(color.r + color.g + color.b);
     float3 finalColor = lerp(source[id.xy].rgb, color, alpha);
 
