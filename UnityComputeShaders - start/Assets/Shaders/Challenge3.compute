@@ -1,8 +1,8 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+#pragma kernel Challenge3
 
-Texture2D<float4> source;
-RWTexture2D<float4> output;
+Texture2D<float4> rendered_source;
+RWTexture2D<float4> rendered_output;
 float tintHeight;
 float shade;
 float edgeWidth;
@@ -10,11 +10,22 @@ float4 tintColor;
 float tintStrength;
 
 [numthreads(8, 8, 1)]
-void CSMain(uint3 id : SV_DispatchThreadID)
+void Challenge3(uint3 id : SV_DispatchThreadID)
 {
-    float4 srcColor = source[id.xy];
-    float4 color = srcColor;
+    uint2 textureDimension;
+    float3 finalColor = rendered_source[id.xy];
+    
+    rendered_source.GetDimensions(textureDimension.x, textureDimension.y);
+    
+    float2 uv = (float2)id.xy / (float2)textureDimension;
+    float3 grayScale = (finalColor.r + finalColor.g + finalColor.b) / 3.0;
+    float3 tintedColor = grayScale * tintColor.rgb;
+    
+    tintedColor = lerp(finalColor, tintedColor, tintStrength);
+    
+    float sepiaBand = saturate(smoothstep(((tintHeight - 0.01) * 0.001), (tintHeight * 0.001) + edgeWidth, (float)uv.y));
+    
+    finalColor = lerp(tintedColor, finalColor, sepiaBand) * shade;
 
-    output[id.xy] = color;
-
+    rendered_output[id.xy] = float4(finalColor , 1);
 }

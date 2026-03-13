@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class Challenge3 : BaseCompletePP
+public class Challenge3 : MyBasePP
 {
     [Range(0.0f, 1.0f)]
     public float height = 0.3f;
-    [Range(0.0f, 100.0f)]
+    [Range(0.0f, 1.0f)]
     public float softenEdge;
     [Range(0.0f, 1.0f)]
     public float shade;
@@ -19,7 +19,8 @@ public class Challenge3 : BaseCompletePP
 
     private void OnValidate()
     {
-        if(!init)
+        _kernelName = "Challenge3";
+        if(!_init)
             Init();
            
         SetProperties();
@@ -27,24 +28,24 @@ public class Challenge3 : BaseCompletePP
 
     protected void SetProperties()
     {
-        float tintHeight = height * texSize.y;
-        shader.SetFloat("tintHeight", tintHeight);
-        shader.SetFloat("edgeWidth", tintHeight * softenEdge / 100.0f);
-        shader.SetFloat("shade", shade);
-        shader.SetFloat("tintStrength", tintStrength);
-        shader.SetVector("tintColor", tintColor);
+        float tintHeight = height * _textureSize.y;
+        computeShader.SetFloat("tintHeight", tintHeight);
+        computeShader.SetFloat("edgeWidth", tintHeight * softenEdge / 100.0f);
+        computeShader.SetFloat("shade", shade);
+        computeShader.SetFloat("tintStrength", tintStrength);
+        computeShader.SetVector("tintColor", tintColor);
     }
 
     protected override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (!init || shader == null)
+        if (!IsSupported)
         {
             Graphics.Blit(source, destination);
         }
         else
         {
             CheckResolution(out _);
-            DispatchWithSource(ref source, ref destination);
+            DispatchCompute(ref source, ref destination);
         }
     }
 
