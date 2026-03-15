@@ -1,5 +1,12 @@
 ﻿#pragma kernel CSParticle
 
+struct Particle
+{
+	float3 position;
+	float3 velocity;
+	float life;
+};
+RWStructuredBuffer<Particle> particleBuffer;
 
 // Variables set from the CPU 
 float deltaTime;
@@ -25,14 +32,30 @@ void respawn(uint id)
 	float f2 = float(rand_xorshift()) * tmp - 0.5;
 	float3 normalF3 = normalize(float3(f0, f1, f2)) * 0.8f;
 	normalF3 *= float(rand_xorshift()) * tmp;
-	/*particleBuffer[id].position = float3(normalF3.x + mousePosition.x, normalF3.y + mousePosition.y, normalF3.z + 3.0);
+	particleBuffer[id].position = float3(normalF3.x + mousePosition.x, normalF3.y + mousePosition.y, normalF3.z + 0.2);
 	// reset the life of this particle
-	particleBuffer[id].life = 4;
-	particleBuffer[id].velocity = float3(0,0,0);*/
+	particleBuffer[id].life = 25;
+	particleBuffer[id].velocity = float3(0,0,0);
 }
 
-[numthreads(256, 1, 1)]
+[numthreads(512, 1, 1)]
 void CSParticle(uint3 id : SV_DispatchThreadID)
 {
+	Particle particle = particleBuffer[id.x];
 	
+	particle.life -= deltaTime;
+	particle.position += particle.velocity.x * deltaTime;
+	
+	float3 delta = float3(mousePosition.xy, deltaTime) - particle.position;
+	float3 dir = normalize(delta);
+	
+	particle.velocity += dir;
+	particle.position += particle.velocity * deltaTime;
+	
+	particleBuffer[id.x] = particle;
+	
+	if (particle.life < 0.0f)
+	{
+		respawn(id.x);
+	}
 }
